@@ -12,7 +12,13 @@ struct SettingsView: View {
     @AppStorage("glances_url", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")) private var glancesUrl: String = "https://"
     @AppStorage("coolify_token", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")) private var coolifyToken: String = ""
     @AppStorage("coolify_url", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")) private var coolifyUrl: String = "https://"
-    @AppStorage("torbox_token", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab"))var torboxToken: String = ""
+    @AppStorage("torbox_token", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab"))
+        private var torboxToken: String = ""
+    
+    @AppStorage("cf_client_id", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab"))
+        private var cfClientId: String = ""
+    @AppStorage("cf_client_secret", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab"))
+        private var cfClientSecret: String = ""
     
     @Environment(\.dismiss) var dismiss
 
@@ -35,7 +41,7 @@ struct SettingsView: View {
                     SecureField(LocalizedStringResource.apiToken, text: $coolifyToken)
                     
                 }
-
+                
                 
                 Section(header: Text(LocalizedStringResource.torboxStorage), footer: Text(LocalizedStringResource.apiTokenCanBeFoundOnTorbox)) {
                     SecureField(LocalizedStringResource.apiToken, text: $torboxToken)
@@ -43,6 +49,15 @@ struct SettingsView: View {
                         .disableAutocorrection(true)
                 }
                 
+                Section(header: Text(LocalizedStringResource.cloudflareAccess), footer: Text(LocalizedStringResource.ifYouUseCloudflareAccess)) {
+                    TextField(LocalizedStringResource.cfClientId, text: $cfClientId)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                    
+                    SecureField(LocalizedStringResource.cfClientSecret, text: $cfClientSecret)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                }
             }
             .navigationTitle(LocalizedStringResource.parameters)
         }
