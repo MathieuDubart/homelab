@@ -31,11 +31,31 @@ final class GlancesService: Sendable {
     /* T is used for generics. Type needs to conform to Codable & Sendable */
     private func fetch<T: Codable & Sendable>(endpoint: String) async throws -> T {
         let url = baseURL.appendingPathComponent(apiRoute)
-                            .appendingPathComponent(endpoint)
+            .appendingPathComponent(endpoint)
         
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.cachePolicy = .reloadIgnoringLocalCacheData
         
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+        let shared = UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")
+        if let clientId = shared?.string(forKey: "cf_client_id"),
+           let clientSecret = shared?.string(forKey: "cf_client_secret"),
+           !clientId.isEmpty {
+            
+            request.setValue(clientId, forHTTPHeaderField: "CF-Access-Client-Id")
+            request.setValue(clientSecret, forHTTPHeaderField: "CF-Access-Client-Secret")
+        }
+        
+        
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        if httpResponse.statusCode != 200 {
+            print("❌ Glances Error: HTTP \(httpResponse.statusCode) on \(endpoint)")
             throw URLError(.badServerResponse)
         }
         

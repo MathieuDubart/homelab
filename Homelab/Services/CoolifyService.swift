@@ -29,6 +29,14 @@ class CoolifyService {
         
         var request = URLRequest(url: url)
         
+        let shared = UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")
+        if let id = shared?.string(forKey: "cf_client_id"),
+            let secret = shared?.string(forKey: "cf_client_secret"),
+           !id.isEmpty {
+            request.setValue(id, forHTTPHeaderField: "CF-Access-Client-Id")
+            request.setValue(secret, forHTTPHeaderField: "CF-Access-Client-Secret")
+        }
+        
         request.httpMethod = "GET"
         
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
