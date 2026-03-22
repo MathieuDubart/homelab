@@ -102,15 +102,29 @@ func fetchWidgetData(url: String) async -> QuickStats {
         return QuickStats(cpu: 0, mem: 0)
     }
     
+    var request = URLRequest(url: finalURL)
+    request.httpMethod = "GET"
+    
+    let shared = UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")
+    if let clientId = shared?.string(forKey: "cf_client_id"),
+       let clientSecret = shared?.string(forKey: "cf_client_secret"),
+       !clientId.isEmpty {
+        
+        request.setValue(clientId, forHTTPHeaderField: "CF-Access-Client-Id")
+        request.setValue(clientSecret, forHTTPHeaderField: "CF-Access-Client-Secret")
+    }
+    
+    
     do {
-        let (data, _) = try await URLSession.shared.data(from: finalURL)
+        let (data, _) = try await URLSession.shared.data(for: request)
+        
         if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
             let cpu = json["cpu"] as? Double ?? 0
             let mem = json["mem"] as? Double ?? 0
             return QuickStats(cpu: cpu, mem: mem)
         }
     } catch {
-        print("Widget Fetch Error: \(error)")
+        print("🚨 Widget Quicklook Error: \(error)")
     }
     return QuickStats(cpu: 0, mem: 0)
 }
@@ -118,8 +132,20 @@ func fetchWidgetData(url: String) async -> QuickStats {
 private func fetchTopContainers(url: String) async -> [WidgetContainer] {
     guard let finalURL = URL(string: "\(url)/api/4/containers") else { return [] }
     
+    var request = URLRequest(url: finalURL)
+    request.httpMethod = "GET"
+    
+    let shared = UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")
+    if let clientId = shared?.string(forKey: "cf_client_id"),
+       let clientSecret = shared?.string(forKey: "cf_client_secret"),
+       !clientId.isEmpty {
+        
+        request.setValue(clientId, forHTTPHeaderField: "CF-Access-Client-Id")
+        request.setValue(clientSecret, forHTTPHeaderField: "CF-Access-Client-Secret")
+    }
+    
     do {
-        let (data, _) = try await URLSession.shared.data(from: finalURL)
+        let (data, _) = try await URLSession.shared.data(for: request)
         
         let rawContainers = try JSONDecoder().decode([DockerContainer].self, from: data)
         
@@ -127,12 +153,13 @@ private func fetchTopContainers(url: String) async -> [WidgetContainer] {
         let top3 = sorted.prefix(3).map { container in
             WidgetContainer(
                 name: container.name,
-                memoryUsage: Double(container.memoryUsage ?? 0) / (1024 * 1024),
+                memoryUsage: Double(container.memoryUsage ?? 0) / (1024 * 1024), // Bytes -> MB
                 memoryLimit: 0
             )
         }
         return Array(top3)
     } catch {
+        print("🚨 Widget Containers Error: \(error)")
         return []
     }
 }
