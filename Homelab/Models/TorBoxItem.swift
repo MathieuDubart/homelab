@@ -6,6 +6,7 @@
 //
 
 
+import Foundation
 struct TorBoxItem: Codable, Identifiable {
     let id: Int
     let name: String
@@ -27,4 +28,34 @@ struct TorBoxItem: Codable, Identifiable {
         case uploadSpeed = "upload_speed"
         case downloadFinished = "download_finished"
     }
+    
+    var fileIcon: String {
+        let name = self.name.lowercased()
+        if name.contains(".mkv") || name.contains(".mp4") { return "movieclapper.fill" }
+        if name.contains(".zip") || name.contains(".rar") { return "doc.zipper" }
+        if name.contains(".iso") { return "opticaldisc" }
+        return "doc.fill"
+    }
+    
+    var cleanName: String {
+        let pattern = #"(^.*?)(?=\s?[\s.\[\(](\d{4})[\s.\]\)])"#
+        if let range = self.name.range(of: pattern, options: .regularExpression) {
+            return String(self.name[range]).replacingOccurrences(of: ".", with: " ")
+        }
+        return self.name.replacingOccurrences(of: ".", with: " ")
+    }
+    
+    var releaseYear: String {
+        let pattern = #"\d{4}"#
+        if let range = self.name.range(of: pattern, options: .regularExpression) {
+            return String(self.name[range])
+        }
+        return ""
+    }
+    
+    var formattedSize: String {
+        ByteCountFormatter.string(fromByteCount: Int64(self.size), countStyle: .file)
+    }
 }
+
+

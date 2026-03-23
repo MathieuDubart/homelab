@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct DashboardView: View {
-    
     @AppStorage("glances_url", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab"))
     private var glancesUrl: String = ""
     @AppStorage("coolify_token", store: UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")) private var coolifyToken: String = ""
@@ -16,138 +15,96 @@ struct DashboardView: View {
     
     @State private var viewModel: DashboardViewModel?
     
+    let columns = [
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16)
+    ]
+    
     var body: some View {
         NavigationStack {
-            Group {
-                if glancesUrl.isEmpty || glancesUrl == "https://" {
-                    setupRequiredView
-                } else if let vm = viewModel {
-                    mainDashboard(vm)
-                } else {
-                    ProgressView(LocalizedStringResource.initialisation)
-                }
-            }
-            .navigationTitle(LocalizedStringResource.systemMonitorTitle)
-            .onAppear {
-                refreshViewModel()
-            }
-            .onChange(of: glancesUrl) { _, _ in
-                refreshViewModel()
-            }
-        }
-    }
-    
-    // MARK: - Sub views
-    
-    private var setupRequiredView: some View {
-        ContentUnavailableView {
-            Label(LocalizedStringResource.serverConfiguration, systemImage: "network")
-        } description: {
-            Text(LocalizedStringResource.enterGlancesUrl)
-        } actions: {
-            NavigationLink("openSettings", destination: SettingsView())
-        }
-    }
-    
-    private func mainDashboard(_ vm: DashboardViewModel) -> some View {
-        List {
-            Section(LocalizedStringResource.systemTitle) {
-                VStack(spacing: 12) {
-                    StatGauge(
-                        title: "CPU",
-                        value: vm.cpuUsage,
-                        detailText: "\(String(format: "%.1f", vm.cpuUsage))%",
-                        color: .indigo
-                    )
-                    
-                    StatGauge(
-                        title: "RAM",
-                        value: vm.ramUsage,
-                        detailText: vm.ramDetailString,
-                        color: .green
-                    )
-                }
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-            }
-            
-            Section(LocalizedStringResource.servicesTitle) {
-                if vm.sortedContainers.isEmpty && !vm.isLoading {
-                    Text(LocalizedStringResource.noContainerAvailable)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                } else {
-                    ForEach(vm.sortedContainers) { container in
-                        ContainerRow(container: container)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button {
-                                    performAction(.restart, for: container)
-                                } label: {
-                                    Label("Restart", systemImage: "arrow.clockwise")
-                                }
-                                .tint(.orange)
-                                
-                                if container.status.contains("Up") {
-                                    Button(role: .destructive) {
-                                        performAction(.stop, for: container)
-                                    } label: {
-                                        Label("Stop", systemImage: "stop.fill")
-                                    }
-                                } else {
-                                    Button {
-                                        performAction(.start, for: container)
-                                    } label: {
-                                        Label("Start", systemImage: "play.fill")
-                                    }
-                                    .tint(.green)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    if glancesUrl.isEmpty || glancesUrl == "https://" {
+                        setupRequiredView
+                    } else if let vm = viewModel {
+                        Text(LocalizedStringResource.systemTitle)
+                            .font(.headline)
+                            .padding(.horizontal)
+                        
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            StatCardView(
+                                title: "CPU",
+                                value: String(format: "%.1f", vm.cpuUsage),
+                                systemImage: "cpu",
+                                color: .indigo,
+                                progress: vm.cpuUsage / 100
+                            )
+                            
+                            StatCardView(
+                                title: "RAM",
+                                value: String(format: "%.0f", vm.ramUsage),
+                                systemImage: "memorychip",
+                                color: .green,
+                                progress: vm.ramUsage / 100
+                            )
+                        }
+                        .padding(.horizontal)
+                        
+                        Text(LocalizedStringResource.servicesTitle)
+                            .font(.headline)
+                            .padding(.horizontal)
+                            .padding(.top, 10)
+                        
+                        if vm.sortedContainers.isEmpty && !vm.isLoading {
+                            Text(LocalizedStringResource.noContainerAvailable)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
+                        } else {
+                            VStack(spacing: 12) {
+                                ForEach(vm.sortedContainers) { container in
+                                    ContainerRow(container: container)
+                                        .padding()
+                                        .background(Color(.secondarySystemGroupedBackground))
+                                        .cornerRadius(12)
                                 }
                             }
+                            .padding(.horizontal)
+                        }
+                    } else {
+                        ProgressView(LocalizedStringResource.initialisation)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .animation(.default, value: vm.sortedContainers)
                 }
+                .padding(.vertical)
             }
-        }
-        .refreshable {
-            await vm.fetchData()
-        }
-        .overlay(alignment: .top) {
-            if let error = vm.errorMessage {
-                errorBanner(error)
-            }
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle(LocalizedStringResource.systemMonitorTitle)
+            .refreshable { await viewModel?.fetchData() }
+            .onAppear { refreshViewModel() }
         }
     }
     
-    private func errorBanner(_ message: String) -> some View {
-        Text(message)
-            .font(.caption)
-            .bold()
-            .padding(10)
-            .frame(maxWidth: .infinity)
-            .background(.red.opacity(0.9))
-            .foregroundColor(.white)
-            .transition(.move(edge: .top).combined(with: .opacity))
+    private var setupRequiredView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "server.rack")
+                .font(.system(size: 60))
+                .foregroundColor(.secondary)
+            Text(LocalizedStringResource.checkStatsAtAGlance)
+                .font(.headline)
+            Text(LocalizedStringResource.enterGlancesUrl)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 50)
+        .padding(.horizontal)
     }
-    
-    // MARK: - Logique
     
     private func refreshViewModel() {
-        if !glancesUrl.isEmpty && glancesUrl != "https://" {
-            viewModel?.stopMonitoring()
-            viewModel = DashboardViewModel(host: glancesUrl)
-            viewModel?.startMonitoring()
-        }
-    }
-    
-    private func performAction(_ action: CoolifyService.Action, for container: DockerContainer) {
-        let service = CoolifyService(host: coolifyUrl, token: coolifyToken)
-        
-        Task {
-            do {
-                try await service.execute(action: action, for: container.name)
-                
-            } catch {
-                print("Error on action \(action) for container \(container.name): \(error)")
-            }
-        }
+        guard !glancesUrl.isEmpty, glancesUrl != "https://" else { return }
+        viewModel = DashboardViewModel(host: glancesUrl)
+        viewModel?.startMonitoring()
     }
 }

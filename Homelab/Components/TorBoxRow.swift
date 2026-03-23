@@ -19,35 +19,43 @@ struct TorBoxRow: View {
     }()
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(torrent.name)
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
-                    .lineLimit(1)
-                Spacer()
-                Text(torrent.status.rawValue.capitalized)
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(torrent.status.color)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(torrent.status.color.opacity(0.1))
-                    .cornerRadius(6)
-            }
+        HStack(alignment: .top, spacing: 6) {
             
-            HStack {
-                ProgressView(value: torrent.progress)
-                    .progressViewStyle(LinearProgressViewStyle(tint: torrent.status.color))
-                
-                Text("\(Int((torrent.progress ?? 0) * 100))%")
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.secondary)
-            }
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.gray.opacity(0.2))
+                .frame(width: 50, height: 75)
+                .overlay(
+                    Image(systemName: "popcorn.fill")
+                        .foregroundColor(.secondary)
+                )
             
-            HStack {
-                Text(byteCountFormatter.string(fromByteCount: torrent.size))
-                    .font(.system(size: 12))
+            
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .center) {
+                    Text(torrent.cleanName)
+                        .font(.headline)
+                        .lineLimit(2)
+                    
+                    Spacer()
+                        .frame(width: 6)
+                    
+                    Text(torrent.status.rawValue.capitalized)
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(torrent.status.color)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(torrent.status.color.opacity(0.1))
+                        .cornerRadius(8)
+                    
+                    Spacer()
+                    
+                    Text(torrent.releaseYear)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
                 
                 Spacer()
+                    .frame(height: 18)
                 
                 if torrent.status == .downloading, let speed = torrent.downloadSpeed {
                     HStack(spacing: 4) {
@@ -56,11 +64,18 @@ struct TorBoxRow: View {
                         Text("\(byteCountFormatter.string(fromByteCount: speed))/s")
                             .font(.system(size: 12, design: .monospaced))
                     }
-                    .foregroundColor(torrent.status.color)
+                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                    .foregroundColor(.secondary)
                 }
+                
+                
+                ProgressView(value: torrent.progress ?? 0)
+                    .progressViewStyle(.linear)
+                    .tint(torrent.status.color)
+                    .frame(height: 2)
             }
-            .foregroundColor(.secondary)
+            .padding(.vertical, 8)
         }
-        .padding(.vertical, 4)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

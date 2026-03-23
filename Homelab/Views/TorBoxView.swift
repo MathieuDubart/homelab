@@ -64,15 +64,23 @@ struct TorBoxView: View {
     }
     
     private var torrentListView: some View {
-        let sortedTorrents = viewModel.torrents.sorted { $0.progress ?? 0 > $1.progress ?? 1 }
+        let sortedTorrents = viewModel.torrents.sorted { $0.progress ?? 0 > $1.progress ?? 0 }
+        
         return ForEach(sortedTorrents) { torrent in
             TorBoxRow(torrent: torrent)
+                .listRowBackground(Color(.secondarySystemGroupedBackground))
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            
                 .swipeActions(edge: .leading) {
                     leadingSwipeActions(for: torrent)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(role: .destructive) {
-                        Task { await viewModel.removeTorrent(id: torrent.id) }
+                        let generator = UIImpactFeedbackGenerator(style: .medium)
+                        Task {
+                            await viewModel.removeTorrent(id: torrent.id)
+                            generator.impactOccurred()
+                        }
                     } label: {
                         Label(LocalizedStringResource.remove, systemImage: "trash.fill")
                     }

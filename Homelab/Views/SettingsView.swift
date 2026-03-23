@@ -25,41 +25,84 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text(LocalizedStringResource.serverConfiguration), footer:Text(LocalizedStringResource.cloudflareTunnelExempleUrl)) {
-                    TextField(LocalizedStringResource.cloudflareTunnelExempleUrl, text: $glancesUrl)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
+                Section {
+                    HStack {
+                        Image(systemName: "server.rack")
+                            .foregroundStyle(.white)
+                            .padding(6)
+                            .background(Color.blue.gradient, in: RoundedRectangle(cornerRadius: 8))
+                        
+                        VStack(alignment: .leading) {
+                            Text("Glances API")
+                                .font(.subheadline.bold())
+                            TextField("https://stats.mondomaine.com", text: $glancesUrl)
+                                .font(.system(.caption, design: .monospaced))
+                                .autocorrectionDisabled()
+                                .textInputAutocapitalization(.never)
+                        }
+                    }
+                } header: {
+                    Text("mainServer")
+                } footer: {
+                    Text("urlMustIncludeHttps")
                 }
                 
-                Section(header: Text(LocalizedStringResource.coolifyApi), footer:Text(LocalizedStringResource.generableInCoolifyInstance)) {
-                    TextField(LocalizedStringResource.cloudflareTunnelExempleUrl, text: $coolifyUrl)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
+                Section {
+                    SettingsRow(icon: "shippingbox.fill", color: .orange, title: String(localized: "serverConfiguration")) {
+                        TextField("https://app.coolify.io", text: $coolifyUrl)
+                            .font(.system(.caption, design: .monospaced))
+                            .textInputAutocapitalization(.never)
+                    }
                     
-                    SecureField(LocalizedStringResource.apiToken, text: $coolifyToken)
-                    
+                    SettingsRow(icon: "key.fill", color: .orange, title: String(localized: "apiToken")) {
+                        SecureField("Bearer Token", text: $coolifyToken)
+                            .font(.system(.caption, design: .monospaced))
+                    }
+                } header: {
+                    Text("coolifyApi")
+                } footer: {
+                    Text("generableInCoolifyInstance")
                 }
                 
-                
-                Section(header: Text(LocalizedStringResource.torboxStorage), footer: Text(LocalizedStringResource.apiTokenCanBeFoundOnTorbox)) {
-                    SecureField(LocalizedStringResource.apiToken, text: $torboxToken)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                Section {
+                    SettingsRow(icon: "person.badge.shield.checkmark.fill", color: .orange, title: String(localized: "cfClientId")) {
+                        TextField("CF-Access-Client-Id", text: $cfClientId)
+                    }
+                    
+                    SettingsRow(icon: "key.fill", color: .orange, title: String(localized: "cfClientSecret")) {
+                        SecureField("CF-Access-Client-Secret", text: $cfClientSecret)
+                    }
+                } header: {
+                    Text("cloudflareAccess")
+                } footer: {
+                    Text("ifYouUseCloudflareAccess")
                 }
                 
-                Section(header: Text(LocalizedStringResource.cloudflareAccess), footer: Text(LocalizedStringResource.ifYouUseCloudflareAccess)) {
-                    TextField(LocalizedStringResource.cfClientId, text: $cfClientId)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                Section {
+                    SettingsRow(icon: "square.stack.fill", color: .purple, title: String(localized: "apiToken")) {
+                        SecureField("Token TorBox", text: $torboxToken)
+                    }
+                } header: {
+                    Text("cloudStorage")
+                }
+                
+                Section {
+                    HStack {
+                        Text("version")
+                        Spacer()
+                        Text("1.2.0-stable")
+                            .foregroundColor(.secondary)
+                    }
                     
-                    SecureField(LocalizedStringResource.cfClientSecret, text: $cfClientSecret)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                    Link(destination: URL(string: "https://github.com/MathieuDubart/homelab")!) {
+                        Label(String(localized: "sourceCode"), systemImage: "terminal.fill")
+                    }
+                } header: {
+                    Text("about")
                 }
             }
-            .navigationTitle(LocalizedStringResource.parameters)
+            .navigationTitle(String(localized: "settings"))
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
