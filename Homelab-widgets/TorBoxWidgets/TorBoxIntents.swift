@@ -23,15 +23,12 @@ struct DeleteTorrentIntent: AppIntent {
     }
     
     func perform() async throws -> some IntentResult {
-        // 1. Récupérer le token depuis le stockage partagé
         let sharedSuite = UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")
         let token = sharedSuite?.string(forKey: "torbox_token") ?? ""
         let service = await TorBoxService(token: token)
         
-        // 2. Tenter la suppression réelle (silencieusement si erreur)
         try? await service.removeTorrent(id: id)
         
-        // 3. Appliquer le filtre persistant (solution d'hier pour le ghost data)
         await DeletedTorrentsManager.instance.markAsDeleted(id: id)
         
         print("🗑️ Widget : Marked \(name) (ID: \(id)) as deleted.")
