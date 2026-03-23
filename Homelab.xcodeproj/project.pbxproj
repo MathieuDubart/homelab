@@ -10,6 +10,7 @@
 		DB6BD9F42F6C6BF600836657 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6BD9F32F6C6BF600836657 /* WidgetKit.framework */; };
 		DB6BD9F62F6C6BF600836657 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6BD9F52F6C6BF600836657 /* SwiftUI.framework */; };
 		DB6BDA072F6C6BF600836657 /* Homelab-widgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB6BD9F12F6C6BF600836657 /* Homelab-widgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DB77D3EF2F7151BA00827094 /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = DB77D3EE2F7151BA00827094 /* LICENSE.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		DB6BD9F32F6C6BF600836657 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		DB6BD9F52F6C6BF600836657 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		DB6BDA0D2F6C6C0D00836657 /* Homelab-widgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Homelab-widgetsExtension.entitlements"; sourceTree = "<group>"; };
+		DB77D3EE2F7151BA00827094 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -130,6 +132,7 @@
 		DB066A762F6B288900BF847D = {
 			isa = PBXGroup;
 			children = (
+				DB77D3EE2F7151BA00827094 /* LICENSE.md */,
 				DB6BDA0D2F6C6C0D00836657 /* Homelab-widgetsExtension.entitlements */,
 				DB066A812F6B288900BF847D /* Homelab */,
 				DB6BD9F72F6C6BF600836657 /* Homelab-widgets */,
@@ -249,6 +252,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB77D3EF2F7151BA00827094 /* LICENSE.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
