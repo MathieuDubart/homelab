@@ -45,20 +45,20 @@
 
 ### Tech Stack
 
-  → SwiftUI & Swift Concurrency: Leveraging async/await and Task for non-blocking network operations.
+  → **SwiftUI & Swift Concurrency**: Leveraging async/await and Task for non-blocking network operations.
 
-  → WidgetKit (iOS 17+): Interactive widgets using AppIntents for direct infrastructure control from the Home Screen.
+  → **WidgetKit (iOS 17+)**: Interactive widgets using AppIntents for direct infrastructure control from the Home Screen.
 
-  → Cloudflare Zero Trust: Programmatic bypass of SSO via Service Tokens.
+  → **Cloudflare Zero Trust**: Programmatic bypass of SSO via Service Tokens.
 
-  → Persistent Storage: Unified UserDefaults via App Groups for cross-target data sharing.
+  → **Persistent Storage**: Unified UserDefaults via App Groups for cross-target data sharing.
 
 ### Engineering Challenges
-  → Zero Trust Architecture: Implementation of Cloudflare Access (mTLS/Service Tokens) to secure internal APIs without compromising the mobile experience.
+  → **Zero Trust Architecture**: Implementation of Cloudflare Access (mTLS/Service Tokens) to secure internal APIs without compromising the mobile experience.
 
-  → Multi-Process State Sync: Use of App Groups and custom StorageService to maintain a single source of truth between the main App and interactive Home Screen Widgets.
+  → **Multi-Process State Sync**: Use of App Groups and custom StorageService to maintain a single source of truth between the main App and interactive Home Screen Widgets.
 
-  → Optimistic UI & Ghost Data Handling: Custom logic to manage API latency and "phantom" items, ensuring a "Zero Friction" user experience even with slow backend responses.
+  → **Optimistic UI & Ghost Data Handling**: Custom logic to manage API latency and "phantom" items, ensuring a "Zero Friction" user experience even with slow backend responses.
   
 ## License
 
