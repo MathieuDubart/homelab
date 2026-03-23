@@ -1,6 +1,6 @@
 # Homelab 🏠
 
-A lightweight, native iOS dashboard to monitor and control your self-hosted Coolify
+ Homelab iOS – A high-performance, native dashboard for self-hosted infrastructure. Built with a focus on Zero Trust security and multi-process synchronization. 
 
 ## Features
 
