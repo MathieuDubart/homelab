@@ -2,62 +2,51 @@
 //  MainTabView.swift
 //  Homelab
 //
-//  Created by Mathieu Dubart on 20/03/2026.
-//
-
 
 import SwiftUI
 
 struct MainTabView: View {
-    @State private var selectedTab: Tab = .dashboard
-    
-    enum Tab {
-        case dashboard
-        case containers
-        case storage
-        case settings
-    }
-    
+    @State private var selection: RootTab = .dashboard
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            
-            NavigationStack {
-                DashboardView()
-            }
-            .tabItem {
-                Label {
-                    Text(LocalizedStringResource.dashboard)
-                } icon: {
-                    Image(systemName: "gauge.with.needle")
+        ZStack {
+            MeshBackground(tints: selection.meshTints)
+                .animation(.easeInOut(duration: 0.8), value: selection)
+
+            Group {
+                switch selection {
+                case .dashboard: DashboardView()
+                case .storage:   TorBoxView()
+                case .settings:  SettingsView()
                 }
             }
-            .tag(Tab.dashboard)
-            
-            NavigationStack {
-                TorBoxView()
+            .transition(.asymmetric(
+                insertion: .opacity.combined(with: .scale(scale: 0.98)),
+                removal:   .opacity
+            ))
+            .id(selection)
+
+            VStack {
+                Spacer()
+                FloatingTabBar(selection: $selection)
+                    .padding(.bottom, 8)
             }
-            .tabItem {
-                Label {
-                    Text(LocalizedStringResource.storage)
-                } icon: {
-                    Image(systemName: "folder.badge.gearshape")
-                }
-            }
-            .tag(Tab.storage)
-            
-            
-            NavigationStack {
-                SettingsView()
-            }
-            .tabItem {
-                Label {
-                    Text(LocalizedStringResource.settings)
-                } icon: {
-                    Image(systemName: "gear")
-                }
-            }
-            .tag(Tab.settings)
         }
-        .tint(.blue) 
+        .preferredColorScheme(.dark)
+        .tint(selection.tint)
     }
+}
+
+private extension RootTab {
+    var meshTints: [Color] {
+        switch self {
+        case .dashboard: return [Palette.electric, Palette.mint,   Palette.plasma]
+        case .storage:   return [Palette.plasma,   Palette.electric, Palette.solar]
+        case .settings:  return [Palette.solar,    Palette.plasma,   Palette.electric]
+        }
+    }
+}
+
+#Preview {
+    MainTabView()
 }
