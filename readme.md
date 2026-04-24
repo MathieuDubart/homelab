@@ -62,11 +62,14 @@
   
 ## License
 
-Copyright (c) 2026 Mathieu DUBART
+Copyright (C) 2026 Mathieu Dubart
 
-[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-This project is licensed under the **CC BY-NC 4.0** license. 
-You are free to share and adapt the code as long as you provide appropriate credit and do not use the material for commercial purposes.
+Homelab is free software, released under the **GNU General Public License,
+version 3 or (at your option) any later version** (`SPDX-License-Identifier:
+GPL-3.0-or-later`). You are free to use, study, share, and modify it under
+the terms of the GPL; derivative works must be released under the same
+license. See [`LICENSE.md`](LICENSE.md) for the full text.
 
 Built with ❤️ for the self-hosting community.
