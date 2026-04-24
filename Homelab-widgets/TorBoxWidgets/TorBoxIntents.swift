@@ -31,8 +31,6 @@ struct DeleteTorrentIntent: AppIntent {
         
         await DeletedTorrentsManager.instance.markAsDeleted(id: id)
         
-        print("🗑️ Widget : Marked \(name) (ID: \(id)) as deleted.")
-        
         return .result()
     }
 }
