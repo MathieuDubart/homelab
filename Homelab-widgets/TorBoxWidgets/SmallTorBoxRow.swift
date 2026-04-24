@@ -1,8 +1,6 @@
 //
 //  SmallTorBoxRow.swift
-//  Homelab
-//
-//  Created by Mathieu Dubart on 20/03/2026.
+//  Homelab-widgets
 //
 
 import SwiftUI
@@ -10,60 +8,78 @@ import AppIntents
 
 struct SmallTorBoxRow: View {
     let torrent: TorBoxItem
-    
+
+    private var tint: Color { torrent.status.wTint }
+    private var progress: Double { torrent.progress ?? 0 }
+
+    private static let sizeFormatter: ByteCountFormatter = {
+        let f = ByteCountFormatter()
+        f.allowedUnits = [.useGB, .useMB]
+        f.countStyle = .file
+        return f
+    }()
+
     var body: some View {
-        VStack(spacing: 8) {
-            Spacer()
-                .frame(height: 8)
-            HStack {
-                VStack {
-                    ZStack {
-                        Circle()
-                            .stroke(torrent.status.color.opacity(0.1), lineWidth: 4)
-                        Circle()
-                            .trim(from: 0, to: CGFloat(torrent.progress ?? 0))
-                            .stroke(torrent.status.color, style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                            .rotationEffect(.degrees(-90))
-                        Text("\(Int((torrent.progress ?? 0) * 100))%")
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
-                            .foregroundColor(torrent.status.color)
-                    }
-                    .frame(width: 36, height: 36)
-                    
-                    Spacer()
-                        .frame(width: 18)
-                    
-                    Text(ByteCountFormatter().string(fromByteCount: torrent.size))
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundColor(.gray)
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 1)
-                        .background(.gray.opacity(0.1))
-                        .cornerRadius(4)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 8) {
+                ZStack {
+                    WNeonRing(
+                        progress: progress,
+                        label: "\(Int(progress * 100))%",
+                        tint: tint,
+                        lineWidth: 4
+                    )
+                    .frame(width: 42, height: 42)
                 }
-                
-                Spacer()
-                
-                Text(torrent.name)
-                    .font(.system(size: 11, weight: .bold))
-                    .lineLimit(4)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 4) {
+                        Image(systemName: torrent.fileIcon)
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(tint)
+                        WStatusPill(text: torrent.status.wLabel, tint: tint)
+                    }
+
+                    Text(torrent.cleanName.isEmpty ? torrent.name : torrent.cleanName)
+                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .foregroundStyle(WInk.primary)
+                        .lineLimit(3)
+                        .multilineTextAlignment(.leading)
+                }
             }
-            
-            Spacer()
-            
+
+            Spacer(minLength: 6)
+
+            HStack(spacing: 4) {
+                Image(systemName: "internaldrive.fill")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(WInk.dim)
+                Text(Self.sizeFormatter.string(fromByteCount: torrent.size))
+                    .font(WFont.monoSmall)
+                    .foregroundStyle(WInk.secondary)
+            }
+
             Button(intent: DeleteTorrentIntent(id: torrent.id, name: torrent.name)) {
-                Image(systemName: "trash.fill")
-                    .font(.system(size: 20))
+                HStack(spacing: 4) {
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 10, weight: .heavy))
+                    Text("Delete")
+                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+                .foregroundStyle(WPalette.ember)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(WPalette.ember.opacity(0.18))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(WPalette.ember.opacity(0.40), lineWidth: 0.8)
+                )
             }
-            .frame(width: 120)
-            .frame(height: 28)
-            .foregroundColor(.red)
-            .padding(.vertical, 6)
-            .background(.red.opacity(0.1))
-            .cornerRadius(8)
             .buttonStyle(.plain)
-            .tint(.red)
-            .controlSize(.regular)
+            .padding(.top, 6)
         }
     }
 }
