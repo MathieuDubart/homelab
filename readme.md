@@ -1,75 +1,104 @@
+<div align="center">
+
 # Homelab 🏠
 
- Homelab iOS – A high-performance, native dashboard for self-hosted infrastructure. Built with a focus on Zero Trust security and multi-process synchronization. 
+**A high-performance, native iOS dashboard for your self-hosted infrastructure.**
+Zero Trust security · multi-process sync · a juicy UI powered by Metal shaders and neon gauges.
 
-## Features
+[![Platform](https://img.shields.io/badge/platform-iOS%2026.2%2B-black.svg?logo=apple)](https://www.apple.com/ios/)
+[![Swift](https://img.shields.io/badge/Swift-5-orange.svg?logo=swift&logoColor=white)](https://swift.org)
+[![Release](https://img.shields.io/github/v/release/MathieuDubart/homelab?sort=semver&label=release)](https://github.com/MathieuDubart/homelab/releases)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE.md)
+[![TestFlight](https://img.shields.io/badge/TestFlight-join%20beta-0A84FF.svg?logo=apple)](https://testflight.apple.com/join/1ENGpuwn)
+[![Made with SwiftUI](https://img.shields.io/badge/made%20with-SwiftUI-5E5CE6.svg?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)
 
-- **Full Stack Monitoring**: Real-time CPU/RAM/Docker stats via Glances & Coolify.
-- **Interactive Contro**l: Start/Stop/Restart services with native Swipe Actions.
-- **TorBox Integration**: Advanced storage management with interactive download controls.
-- **Smart Widgets**: Multi-size interactive widgets for instant system health checks.
-- **Secure by Design**: Native support for Cloudflare Zero Trust (Service Tokens).
+</div>
 
-## Architecture & Engineering
+---
 
-- **Unified Storage**: A centralized StorageService managing App Group persistence, ensuring seamless data flow between the App and Widget extensions.
-- **Network Resilience**: Custom URLRequest builders with automatic header injection for secured endpoints.
-- **UX-First Logic**: Implementation of a DeletedTorrentsManager to handle asynchronous API deletions and prevent "ghost" data display.
+## ✨ Features
 
-## Installation
-### 1. Get the latest release
+- 🧭 **Full-Stack Monitoring** — real-time CPU / RAM / Docker stats via Glances & Coolify
+- ⚡ **Interactive Control** — start / stop / restart services straight from native swipe actions
+- 🗃 **TorBox Integration** — track and manage downloads with juicy, interactive rows
+- 📱 **Smart Widgets** — multi-size widgets with interactive AppIntents for instant health checks from the Home Screen
+- 🔐 **Secure by Design** — native support for Cloudflare Zero Trust (Service Tokens / mTLS)
+- 🎨 **Juicy DA** — custom design system with Metal shaders, animated mesh backdrops, neon gauges, and tuned haptics
 
-  → Go to the [Releases page](https://github.com/MathieuDubart/homelab/releases), download the latest release version and go to step 2 **OR** download the app on [Testflight](https://testflight.apple.com/join/1ENGpuwn).
-  
-### 2. Build & Run
+## 🧱 Architecture
 
-  → Connect your iPhone via USB or select a Simulator.
-  
-  → Ensure your Team is selected in Signing & Capabilities.
-  
-  → Press Cmd + R to build and run.
+- **Unified Storage** — centralized `StorageService` backed by App Groups, ensuring seamless data flow between the main app and widget extensions.
+- **Network Resilience** — custom `URLRequest` builders with automatic header injection for Cloudflare-protected endpoints.
+- **UX-First Logic** — a dedicated `DeletedTorrentsManager` handles asynchronous API deletions and prevents "ghost" data from surfacing.
 
-## Configuration
+## 🛠 Tech Stack
 
-### Once the app is launched:
-  
-  → Enter your Glances URL in the settings.
-  
-  → Paste your Coolify URL & API Token.
+| Layer        | Stack                                                                   |
+| ------------ | ----------------------------------------------------------------------- |
+| UI           | SwiftUI · Metal shaders · custom design system (palette, typography, motion) |
+| Concurrency  | Swift Concurrency (`async/await`, `Task`, actors)                       |
+| Widgets      | WidgetKit + AppIntents (interactive widgets)                            |
+| Persistence  | `UserDefaults` via App Groups                                           |
+| Networking   | `URLSession` with Cloudflare Zero Trust (Service Tokens)                |
+| Haptics      | Centralized `Haptics` helper around `sensoryFeedback` / `CHHapticEngine` |
 
-  → Paste your TorBox API Token.
+## 🚀 Installation
 
-  → Paste your Cloudflare Client ID & Secret if you're using Cloudflare Access to protect your Glances/Coolify services
-  
-  → The dashboard will automatically start polling data.
+### Requirements
 
-### Tech Stack
+- iOS **26.2** or later
+- A recent Xcode shipping the matching iOS SDK
+- At least one of: **Glances**, **Coolify**, **TorBox** reachable from your device
 
-  → **SwiftUI & Swift Concurrency**: Leveraging async/await and Task for non-blocking network operations.
+### Option A — TestFlight *(easiest)*
 
-  → **WidgetKit (iOS 17+)**: Interactive widgets using AppIntents for direct infrastructure control from the Home Screen.
+→ Join the public beta: **<https://testflight.apple.com/join/1ENGpuwn>**
 
-  → **Cloudflare Zero Trust**: Programmatic bypass of SSO via Service Tokens.
+### Option B — Grab a release
 
-  → **Persistent Storage**: Unified UserDefaults via App Groups for cross-target data sharing.
+→ Head to the [**Releases page**](https://github.com/MathieuDubart/homelab/releases) and pick the latest version.
 
-### Engineering Challenges
-  → **Zero Trust Architecture**: Implementation of Cloudflare Access (mTLS/Service Tokens) to secure internal APIs without compromising the mobile experience.
+### Option C — Build from source
 
-  → **Multi-Process State Sync**: Use of App Groups and custom StorageService to maintain a single source of truth between the main App and interactive Home Screen Widgets.
+```bash
+git clone https://github.com/MathieuDubart/homelab.git
+cd homelab
+open Homelab.xcodeproj
+```
 
-  → **Optimistic UI & Ghost Data Handling**: Custom logic to manage API latency and "phantom" items, ensuring a "Zero Friction" user experience even with slow backend responses.
-  
-## License
+→ Pick your signing team under **Signing & Capabilities**
+→ Connect your iPhone or select a simulator
+→ Press **⌘R**
 
-Copyright (C) 2026 Mathieu Dubart
+## ⚙️ Configuration
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+Once launched, open **Settings** and fill in:
 
-Homelab is free software, released under the **GNU General Public License,
-version 3 or (at your option) any later version** (`SPDX-License-Identifier:
-GPL-3.0-or-later`). You are free to use, study, share, and modify it under
-the terms of the GPL; derivative works must be released under the same
-license. See [`LICENSE.md`](LICENSE.md) for the full text.
+| Field                                   | Purpose                                                             |
+| --------------------------------------- | ------------------------------------------------------------------- |
+| Glances URL                             | Base URL of your Glances instance (CPU / RAM / Docker stats)        |
+| Coolify URL + API Token                 | Endpoint and token for managing Coolify services                    |
+| TorBox API Token                        | Authenticates the TorBox integration                                |
+| Cloudflare Client ID & Secret *(opt.)*  | Service Token pair for Cloudflare Access–protected endpoints        |
+
+The dashboard starts polling automatically once the URLs are saved.
+
+## 🧠 Engineering Highlights
+
+- **Zero Trust Architecture** — Cloudflare Access (mTLS / Service Tokens) secures internal APIs without compromising the mobile UX.
+- **Multi-Process State Sync** — App Groups + custom `StorageService` keep a single source of truth between the main app and interactive widgets.
+- **Optimistic UI & Ghost Data Handling** — custom logic masks API latency and phantom items for a zero-friction experience even with slow backends.
+
+## 📜 License
+
+Copyright © 2026 Mathieu Dubart
+
+Homelab is free software, released under the **GNU General Public License, version 3 or (at your option) any later version** (`SPDX-License-Identifier: GPL-3.0-or-later`). You may use, study, share, and modify it under the terms of the GPL; derivative works must be released under the same license. See [`LICENSE.md`](LICENSE.md) for the full text.
+
+---
+
+<div align="center">
 
 Built with ❤️ for the self-hosting community.
+
+</div>
