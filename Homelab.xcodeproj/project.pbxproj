@@ -76,13 +76,7 @@
 		DBFF83732F6DBDA20041780C /* Exceptions for "Homelab-widgets" folder in "Homelab" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				TorBoxWidgets/MediumTorBoxRow.swift,
-				TorBoxWidgets/SmallTorBoxRow.swift,
-				TorBoxWidgets/TorBoxEntry.swift,
 				TorBoxWidgets/TorBoxIntents.swift,
-				TorBoxWidgets/TorBoxProvider.swift,
-				TorBoxWidgets/TorBoxStorageWidgets.swift,
-				TorBoxWidgets/TorBoxWidgetEntryView.swift,
 			);
 			target = DB066A7E2F6B288900BF847D /* Homelab */;
 		};
