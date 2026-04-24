@@ -1,41 +1,39 @@
 //
-//  StatGauge.swift
-//  Homelab
-//
-//  Created by Mathieu Dubart on 18/03/2026.
+//  WidgetGauge.swift
+//  Homelab-widgets
 //
 
 import SwiftUI
 
+/// Compact CPU / RAM gauge used on the system widget.
+/// Colour tracks the mint → solar → ember spectrum so "hot" stats pop red
+/// against the canvas without needing extra chrome.
 struct WidgetGauge: View {
     let label: String
-    let value: Double
-    let color: Color
-    
+    let value: Double          // 0…100
+    let icon: String
+
+    private var tint: Color { value.wUsageColor }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(label)
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundColor(.secondary)
-                Spacer()
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(tint)
+                Text(label.uppercased())
+                    .font(WFont.caption)
+                    .tracking(0.8)
+                    .foregroundStyle(WInk.dim)
+                Spacer(minLength: 4)
                 Text("\(Int(value))%")
-                    .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                    .foregroundColor(value > 80 ? .red : .primary)
+                    .font(WFont.value)
+                    .monospacedDigit()
+                    .foregroundStyle(tint)
+                    .shadow(color: tint.opacity(0.55), radius: 3)
             }
-            
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(color.opacity(0.2))
-                        .frame(height: 8)
-                    
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(value > 80 ? Color.red : color)
-                        .frame(width: geo.size.width * CGFloat(min(value / 100, 1.0)), height: 8)
-                }
-            }
-            .frame(height: 8)
+
+            WNeonBar(progress: value / 100, tint: tint, height: 6)
         }
     }
 }
