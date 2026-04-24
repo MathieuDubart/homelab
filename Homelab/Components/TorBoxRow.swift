@@ -2,80 +2,123 @@
 //  TorBoxRow.swift
 //  Homelab
 //
-//  Created by Mathieu Dubart on 20/03/2026.
-//
-
 
 import SwiftUI
 
 struct TorBoxRow: View {
     let torrent: TorBoxItem
-    
-    private let byteCountFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.allowedUnits = [.useGB, .useMB]
-        formatter.countStyle = .file
-        return formatter
+
+    private static let byteCountFormatter: ByteCountFormatter = {
+        let f = ByteCountFormatter()
+        f.allowedUnits = [.useGB, .useMB]
+        f.countStyle = .file
+        return f
     }()
-    
+
     var body: some View {
-        HStack(alignment: .top, spacing: 6) {
-            
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.gray.opacity(0.2))
-                .frame(width: 50, height: 75)
-                .overlay(
-                    Image(systemName: "popcorn.fill")
-                        .foregroundColor(.secondary)
-                )
-            
-            
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .center) {
+        HStack(alignment: .top, spacing: 12) {
+            artwork
+
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .top, spacing: 8) {
                     Text(torrent.cleanName)
-                        .font(.headline)
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
                         .lineLimit(2)
-                    
-                    Spacer()
-                        .frame(width: 6)
-                    
-                    Text(torrent.status.rawValue.capitalized)
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundColor(torrent.status.color)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(torrent.status.color.opacity(0.1))
-                        .cornerRadius(8)
-                    
-                    Spacer()
-                    
-                    Text(torrent.releaseYear)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                    .frame(height: 18)
-                
-                if torrent.status == .downloading, let speed = torrent.downloadSpeed {
-                    HStack(spacing: 4) {
-                        Image(systemName: "arrow.down.circle")
-                            .font(.system(size: 10))
-                        Text("\(byteCountFormatter.string(fromByteCount: speed))/s")
-                            .font(.system(size: 12, design: .monospaced))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if !torrent.releaseYear.isEmpty {
+                        Text(torrent.releaseYear)
+                            .font(DSFont.monoSmall)
+                            .foregroundStyle(Ink.dim)
                     }
-                    .font(.system(size: 10, weight: .medium, design: .monospaced))
-                    .foregroundColor(.secondary)
                 }
-                
-                
-                ProgressView(value: torrent.progress ?? 0)
-                    .progressViewStyle(.linear)
-                    .tint(torrent.status.color)
-                    .frame(height: 2)
+
+                HStack(spacing: 6) {
+                    StatusPill(
+                        text: torrent.status.rawValue,
+                        tint: statusTint
+                    )
+
+                    if torrent.status == .downloading, let speed = torrent.downloadSpeed {
+                        HStack(spacing: 3) {
+                            Image(systemName: "arrow.down")
+                                .font(.system(size: 9, weight: .bold))
+                            Text("\(Self.byteCountFormatter.string(fromByteCount: speed))/s")
+                                .font(DSFont.monoSmall)
+                        }
+                        .foregroundStyle(Palette.electric)
+                    }
+
+                    Spacer(minLength: 0)
+
+                    Text("\(Int((torrent.progress ?? 0) * 100))%")
+                        .font(DSFont.monoSmall)
+                        .foregroundStyle(Ink.dim)
+                }
+
+                NeonProgressBar(
+                    progress: torrent.progress ?? 0,
+                    tint: statusTint,
+                    height: 4
+                )
+                .padding(.top, 2)
             }
-            .padding(.vertical, 8)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: Radius.m, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Radius.m, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+        )
+    }
+
+    // MARK: - Sub views
+
+    private var artwork: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [statusTint.opacity(0.45), statusTint.opacity(0.10)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 46, height: 60)
+            Image(systemName: iconName)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.white)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.10), lineWidth: 1)
+        )
+    }
+
+    private var iconName: String {
+        switch torrent.status {
+        case .completed, .cached: return "checkmark.circle.fill"
+        case .downloading:        return "arrow.down.circle.fill"
+        case .checking:           return "magnifyingglass.circle.fill"
+        case .paused:             return "pause.circle.fill"
+        case .error:              return "exclamationmark.triangle.fill"
+        case .unknown:            return "questionmark.circle.fill"
+        }
+    }
+
+    private var statusTint: Color {
+        switch torrent.status {
+        case .completed, .cached: return Palette.mint
+        case .downloading, .checking: return Palette.electric
+        case .paused: return Palette.solar
+        case .error: return Palette.ember
+        case .unknown: return Ink.dim.opacity(1)
+        }
     }
 }
