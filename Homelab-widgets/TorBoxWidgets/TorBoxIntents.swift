@@ -22,15 +22,16 @@ struct DeleteTorrentIntent: AppIntent {
         self.name = name
     }
     
+    @MainActor
     func perform() async throws -> some IntentResult {
         let sharedSuite = UserDefaults(suiteName: "group.fr.mathieu-dubart.homelab")
         let token = sharedSuite?.string(forKey: "torbox_token") ?? ""
-        let service = await TorBoxService(token: token)
-        
+        let service = TorBoxService(token: token)
+
         try? await service.removeTorrent(id: id)
-        
-        await DeletedTorrentsManager.instance.markAsDeleted(id: id)
-        
+
+        DeletedTorrentsManager.instance.markAsDeleted(id: id)
+
         return .result()
     }
 }
