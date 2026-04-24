@@ -5,7 +5,7 @@
 **A high-performance, native iOS dashboard for your self-hosted infrastructure.**
 Zero Trust security · multi-process sync · a juicy UI powered by Metal shaders and neon gauges.
 
-[![Platform](https://img.shields.io/badge/platform-iOS%2026.2%2B-black.svg?logo=apple)](https://www.apple.com/ios/)
+[![Platform](https://img.shields.io/badge/platform-iOS%2018%2B-black.svg?logo=apple)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-5-orange.svg?logo=swift&logoColor=white)](https://swift.org)
 [![Release](https://img.shields.io/github/v/release/MathieuDubart/homelab?sort=semver&label=release)](https://github.com/MathieuDubart/homelab/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE.md)
@@ -46,8 +46,8 @@ Zero Trust security · multi-process sync · a juicy UI powered by Metal shaders
 
 ### Requirements
 
-- iOS **26.2** or later
-- A recent Xcode shipping the matching iOS SDK
+- iOS **18.0** or later (iPhone XS / XR / 11-series and newer)
+- A recent Xcode shipping an iOS 18+ SDK
 - At least one of: **Glances**, **Coolify**, **TorBox** reachable from your device
 
 ### Option A — TestFlight *(easiest)*
