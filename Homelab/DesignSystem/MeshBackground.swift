@@ -13,12 +13,14 @@ struct MeshBackground: View {
     var tints: [Color]
     var intensity: Double = 1.0
 
+    @Environment(\.scenePhase) private var scenePhase
+
     init(tints: [Color] = [Palette.electric, Palette.plasma, Palette.solar]) {
         self.tints = tints
     }
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { context in
+        TimelineView(.animation(minimumInterval: 1.0 / 12.0, paused: scenePhase != .active)) { context in
             let t = context.date.timeIntervalSinceReferenceDate
             ZStack {
                 Palette.canvas.ignoresSafeArea()
@@ -29,8 +31,8 @@ struct MeshBackground: View {
                     points: meshPoints(t: t),
                     colors: meshColors()
                 )
-                .opacity(0.55 * intensity)
-                .blur(radius: 40)
+                .opacity(0.78 * intensity)
+                .blur(radius: 18)
 
                 // Faint top highlight so the nav bar reads well
                 LinearGradient(
@@ -45,17 +47,18 @@ struct MeshBackground: View {
 
     private func meshPoints(t: TimeInterval) -> [SIMD2<Float>] {
         func osc(_ phase: Double, _ amp: Double) -> Float {
-            Float(sin(t * 0.18 + phase) * amp)
+            // Two-harmonic sum for a less robotic, more organic drift.
+            Float((sin(t * 0.75 + phase) * 0.7 + sin(t * 0.31 + phase * 1.7) * 0.3) * amp)
         }
         return [
             SIMD2<Float>(0.0, 0.0),
-            SIMD2<Float>(0.5 + osc(0.1, 0.08), 0.0),
+            SIMD2<Float>(0.5 + osc(0.1, 0.18), 0.0),
             SIMD2<Float>(1.0, 0.0),
-            SIMD2<Float>(0.0, 0.5 + osc(1.2, 0.10)),
-            SIMD2<Float>(0.5 + osc(2.3, 0.12), 0.5 + osc(3.1, 0.12)),
-            SIMD2<Float>(1.0, 0.5 + osc(4.2, 0.10)),
+            SIMD2<Float>(0.0, 0.5 + osc(1.2, 0.20)),
+            SIMD2<Float>(0.5 + osc(2.3, 0.24), 0.5 + osc(3.1, 0.24)),
+            SIMD2<Float>(1.0, 0.5 + osc(4.2, 0.20)),
             SIMD2<Float>(0.0, 1.0),
-            SIMD2<Float>(0.5 + osc(5.1, 0.08), 1.0),
+            SIMD2<Float>(0.5 + osc(5.1, 0.18), 1.0),
             SIMD2<Float>(1.0, 1.0)
         ]
     }
