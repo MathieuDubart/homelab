@@ -18,7 +18,6 @@ struct LiveGauge: View {
     let systemImage: String
     var isLive: Bool = true
 
-    @State private var pulse = false
     @State private var previousBand: Int = 0
 
     private var normalized: Double { min(max(value / 100.0, 0), 1) }
@@ -26,12 +25,10 @@ struct LiveGauge: View {
 
     var body: some View {
         ZStack {
-            // Ambient glow behind the ring
+            // Ambient glow behind the ring (static — no continuous reblur).
             Circle()
-                .fill(tint.opacity(0.18))
-                .blur(radius: 24)
-                .scaleEffect(pulse ? 1.06 : 0.94)
-                .animation(Motion.ambient, value: pulse)
+                .fill(tint.opacity(0.22))
+                .blur(radius: 14)
 
             // Track
             Circle()
@@ -78,7 +75,6 @@ struct LiveGauge: View {
         }
         .frame(width: 160, height: 160)
         .onAppear {
-            pulse = true
             previousBand = band(for: value)
         }
         .onChange(of: value) { _, newValue in
@@ -154,6 +150,7 @@ struct NumberRoll: View, Animatable {
 struct PulseDot: View {
     var tint: Color = Palette.mint
     @State private var breathing = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
@@ -162,12 +159,15 @@ struct PulseDot: View {
                 .frame(width: 18, height: 18)
                 .scaleEffect(breathing ? 1.4 : 0.8)
                 .opacity(breathing ? 0 : 1)
-                .animation(.easeOut(duration: 1.4).repeatForever(autoreverses: false), value: breathing)
+                .animation(.easeOut(duration: 2.0).repeatForever(autoreverses: false), value: breathing)
             Circle()
                 .fill(tint)
                 .frame(width: 8, height: 8)
                 .shadow(color: tint, radius: 4)
         }
         .onAppear { breathing = true }
+        .onChange(of: scenePhase) { _, phase in
+            breathing = (phase == .active)
+        }
     }
 }
