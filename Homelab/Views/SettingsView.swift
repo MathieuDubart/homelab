@@ -170,7 +170,7 @@ struct SettingsView: View {
                             .font(DSFont.body)
                             .foregroundStyle(.white)
                         Spacer()
-                        Text("1.2.0-stable")
+                        Text("1.3.1-stable")
                             .font(DSFont.mono)
                             .foregroundStyle(Ink.dim)
                     }
