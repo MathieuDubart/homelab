@@ -129,8 +129,7 @@ struct TorBoxView: View {
             .frame(width: 42, height: 42)
             .background(
                 Circle()
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .dark)
+                    .fill(Color.white.opacity(0.06))
             )
             .overlay(Circle().strokeBorder(Color.white.opacity(0.10), lineWidth: 1))
         }

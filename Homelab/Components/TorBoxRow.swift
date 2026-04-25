@@ -71,8 +71,7 @@ struct TorBoxRow: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: Radius.m, style: .continuous)
-                .fill(.ultraThinMaterial)
-                .environment(\.colorScheme, .dark)
+                .fill(Color.white.opacity(0.04))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Radius.m, style: .continuous)

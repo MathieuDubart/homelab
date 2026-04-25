@@ -19,8 +19,16 @@ struct GlowCard<Content: View>: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: Radius.l, style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .dark)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.07),
+                                Color.white.opacity(0.025)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Radius.l, style: .continuous)
