@@ -73,37 +73,3 @@ struct MeshBackground: View {
         return base
     }
 }
-
-// MARK: - Aurora overlay powered by the Metal shader
-
-struct AuroraOverlay: View {
-    var tintA: Color = Palette.electric
-    var tintB: Color = Palette.plasma
-    var amount: Double = 1.0
-
-    var body: some View {
-        TimelineView(.animation) { context in
-            let t = context.date.timeIntervalSinceReferenceDate
-            GeometryReader { geo in
-                Rectangle()
-                    .fill(.clear)
-                    .background(
-                        Rectangle()
-                            .fill(Color.white)
-                            .layerEffect(
-                                ShaderLibrary.aurora(
-                                    .float(Float(t)),
-                                    .float2(Float(geo.size.width), Float(geo.size.height)),
-                                    .color(tintA),
-                                    .color(tintB)
-                                ),
-                                maxSampleOffset: .zero
-                            )
-                    )
-                    .opacity(amount)
-                    .blendMode(.plusLighter)
-                    .allowsHitTesting(false)
-            }
-        }
-    }
-}
