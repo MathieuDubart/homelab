@@ -1,6 +1,6 @@
 <div align="center">
 
-# Homelab 🏠
+# Homelab Monitor 🏠
 
 **A high-performance, native iOS dashboard for your self-hosted infrastructure.**
 Zero Trust security · multi-process sync · a juicy UI powered by Metal shaders and neon gauges.
